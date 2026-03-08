@@ -70,8 +70,8 @@ const Dashboard = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-5 gap-8">
-          <div className="lg:col-span-3 space-y-8">
+        <div className={`${hasHistory ? "grid lg:grid-cols-5" : ""} gap-8`}>
+          <div className={`${hasHistory ? "lg:col-span-3" : ""} space-y-8`}>
             <div className="bg-card rounded-xl p-6 shadow-[var(--card-shadow)]">
               <GeneratorForm
                 onGenerated={handleGenerated}
@@ -94,16 +94,18 @@ const Dashboard = () => {
               />
             )}
           </div>
-          <div className="lg:col-span-2">
-            <GenerationHistory onSelect={(gen) => {
-              if (gen.generated_resume && gen.generated_cover_letter) {
-                setResult({
-                  generated_resume: gen.generated_resume,
-                  generated_cover_letter: gen.generated_cover_letter,
-                });
-              }
-            }} refreshKey={refreshKey} />
-          </div>
+          {hasHistory && (
+            <div className="lg:col-span-2">
+              <GenerationHistory onSelect={(gen) => {
+                if (gen.generated_resume && gen.generated_cover_letter) {
+                  setResult({
+                    generated_resume: gen.generated_resume,
+                    generated_cover_letter: gen.generated_cover_letter,
+                  });
+                }
+              }} refreshKey={refreshKey} />
+            </div>
+          )}
         </div>
       </main>
     </div>
