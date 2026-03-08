@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { GeneratorForm } from "@/components/GeneratorForm";
 import { GenerationResult } from "@/components/GenerationResult";
 import { GenerationHistory } from "@/components/GenerationHistory";
+import { ResumeAnalysis } from "@/components/ResumeAnalysis";
 import { Button } from "@/components/ui/button";
 import { LogOut, Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -13,6 +14,8 @@ const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [result, setResult] = useState<{ generated_resume: string; generated_cover_letter: string } | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [resumeText, setResumeText] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -43,7 +46,6 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -60,7 +62,6 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* Main */}
       <main className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="font-display text-3xl font-bold text-foreground">Dashboard</h1>
@@ -72,8 +73,20 @@ const Dashboard = () => {
         <div className="grid lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3 space-y-8">
             <div className="bg-card rounded-xl p-6 shadow-[var(--card-shadow)]">
-              <GeneratorForm onGenerated={handleGenerated} />
+              <GeneratorForm
+                onGenerated={handleGenerated}
+                resumeText={resumeText}
+                onResumeTextChange={setResumeText}
+                jobDescription={jobDescription}
+                onJobDescriptionChange={setJobDescription}
+              />
             </div>
+
+            {/* Resume Analysis */}
+            <div className="bg-card rounded-xl p-6 shadow-[var(--card-shadow)]">
+              <ResumeAnalysis resumeText={resumeText} jobDescription={jobDescription} />
+            </div>
+
             {result && (
               <GenerationResult
                 generatedResume={result.generated_resume}
