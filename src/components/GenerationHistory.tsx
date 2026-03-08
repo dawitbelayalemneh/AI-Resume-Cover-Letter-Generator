@@ -14,9 +14,10 @@ interface Generation {
 interface Props {
   onSelect: (gen: Generation) => void;
   refreshKey: number;
+  onHasHistory?: (has: boolean) => void;
 }
 
-export function GenerationHistory({ onSelect, refreshKey }: Props) {
+export function GenerationHistory({ onSelect, refreshKey, onHasHistory }: Props) {
   const [generations, setGenerations] = useState<Generation[]>([]);
 
   useEffect(() => {
@@ -26,7 +27,12 @@ export function GenerationHistory({ onSelect, refreshKey }: Props) {
         .select("*")
         .order("created_at", { ascending: false })
         .limit(10);
-      if (data) setGenerations(data);
+      if (data) {
+        setGenerations(data);
+        onHasHistory?.(data.length > 0);
+      } else {
+        onHasHistory?.(false);
+      }
     };
     fetchGenerations();
   }, [refreshKey]);
