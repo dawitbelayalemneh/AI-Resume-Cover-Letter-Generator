@@ -97,12 +97,10 @@ const Dashboard = () => {
           </div>
           <div className={hasHistory ? "lg:col-span-2" : "hidden"}>
               <GenerationHistory onSelect={(gen) => {
-                if (gen.generated_resume && gen.generated_cover_letter) {
-                  setResult({
-                    generated_resume: gen.generated_resume,
-                    generated_cover_letter: gen.generated_cover_letter,
-                  });
-                }
+                setResult({
+                  generated_resume: gen.generated_resume || "",
+                  generated_cover_letter: gen.generated_cover_letter || "",
+                });
               }} refreshKey={refreshKey} onHasHistory={setHasHistory} />
             </div>
         </div>
