@@ -14,7 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      generations: {
+        Row: {
+          created_at: string
+          generated_cover_letter: string | null
+          generated_resume: string | null
+          id: string
+          job_description: string
+          resume_file_url: string | null
+          resume_text: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          generated_cover_letter?: string | null
+          generated_resume?: string | null
+          id?: string
+          job_description: string
+          resume_file_url?: string | null
+          resume_text?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          generated_cover_letter?: string | null
+          generated_resume?: string | null
+          id?: string
+          job_description?: string
+          resume_file_url?: string | null
+          resume_text?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          skills: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          skills?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
