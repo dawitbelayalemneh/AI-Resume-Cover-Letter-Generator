@@ -65,8 +65,32 @@ Return your analysis using the provided tool.`;
                     items: { type: "string" },
                     description: "Notes on how the resume aligns with the job description (2-4 items)",
                   },
+                  keywords_to_add: {
+                    type: "array",
+                    items: { type: "string" },
+                    description: "Important keywords missing from the resume that should be added (4-8 keywords/phrases)",
+                  },
+                  missing_skills: {
+                    type: "array",
+                    items: { type: "string" },
+                    description: "Technical or soft skills not mentioned but relevant for the role (3-6 items)",
+                  },
+                  phrasing_improvements: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        original: { type: "string", description: "The original phrase from the resume" },
+                        improved: { type: "string", description: "A stronger, more impactful version" },
+                        reason: { type: "string", description: "Brief explanation of why this is better" },
+                      },
+                      required: ["original", "improved", "reason"],
+                      additionalProperties: false,
+                    },
+                    description: "3-5 specific phrasing improvements for experience descriptions",
+                  },
                 },
-                required: ["overall_score", "strengths", "weaknesses", "suggestions"],
+                required: ["overall_score", "strengths", "weaknesses", "suggestions", "keywords_to_add", "missing_skills", "phrasing_improvements"],
                 additionalProperties: false,
               },
             },
