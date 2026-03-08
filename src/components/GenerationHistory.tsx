@@ -14,6 +14,7 @@ interface Generation {
 interface Props {
   onSelect: (gen: Generation) => void;
   refreshKey: number;
+  onHasHistory?: (has: boolean) => void;
 }
 
 export function GenerationHistory({ onSelect, refreshKey }: Props) {
