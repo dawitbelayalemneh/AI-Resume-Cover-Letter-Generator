@@ -11,9 +11,21 @@ interface GenerationResult {
   generated_cover_letter: string;
 }
 
-export function GeneratorForm({ onGenerated }: { onGenerated: (result: GenerationResult) => void }) {
-  const [jobDescription, setJobDescription] = useState("");
-  const [resumeText, setResumeText] = useState("");
+interface Props {
+  onGenerated: (result: GenerationResult) => void;
+  resumeText: string;
+  onResumeTextChange: (text: string) => void;
+  jobDescription: string;
+  onJobDescriptionChange: (text: string) => void;
+}
+
+export function GeneratorForm({
+  onGenerated,
+  resumeText,
+  onResumeTextChange,
+  jobDescription,
+  onJobDescriptionChange,
+}: Props) {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [extracting, setExtracting] = useState(false);
@@ -26,7 +38,6 @@ export function GeneratorForm({ onGenerated }: { onGenerated: (result: Generatio
     const isPdf = file.name.toLowerCase().endsWith(".pdf");
 
     if (isPdf) {
-      // Use edge function to extract text from PDF
       setExtracting(true);
       try {
         const formData = new FormData();
@@ -49,7 +60,7 @@ export function GeneratorForm({ onGenerated }: { onGenerated: (result: Generatio
         }
 
         const { text } = await response.json();
-        setResumeText(text);
+        onResumeTextChange(text);
         toast.success("PDF text extracted successfully!");
       } catch (error: any) {
         toast.error(error.message || "Failed to extract text from PDF");
@@ -58,9 +69,8 @@ export function GeneratorForm({ onGenerated }: { onGenerated: (result: Generatio
         setExtracting(false);
       }
     } else {
-      // Read text files directly
       const text = await file.text();
-      setResumeText(text);
+      onResumeTextChange(text);
       toast.success("Resume uploaded!");
     }
   };
@@ -80,7 +90,6 @@ export function GeneratorForm({ onGenerated }: { onGenerated: (result: Generatio
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("Not authenticated");
 
-      // Upload file if present
       let resumeFileUrl: string | null = null;
       if (resumeFile) {
         const filePath = `${session.user.id}/${Date.now()}_${resumeFile.name}`;
@@ -97,7 +106,6 @@ export function GeneratorForm({ onGenerated }: { onGenerated: (result: Generatio
 
       if (error) throw error;
 
-      // Save generation to DB
       await supabase.from("generations").insert({
         user_id: session.user.id,
         job_description: jobDescription,
@@ -155,7 +163,7 @@ export function GeneratorForm({ onGenerated }: { onGenerated: (result: Generatio
         <Textarea
           placeholder="Or paste your resume text here..."
           value={resumeText}
-          onChange={(e) => setResumeText(e.target.value)}
+          onChange={(e) => onResumeTextChange(e.target.value)}
           className="min-h-[150px] resize-none"
         />
       </div>
@@ -168,7 +176,7 @@ export function GeneratorForm({ onGenerated }: { onGenerated: (result: Generatio
         <Textarea
           placeholder="Paste the job description here..."
           value={jobDescription}
-          onChange={(e) => setJobDescription(e.target.value)}
+          onChange={(e) => onJobDescriptionChange(e.target.value)}
           className="min-h-[150px] resize-none"
         />
       </div>
