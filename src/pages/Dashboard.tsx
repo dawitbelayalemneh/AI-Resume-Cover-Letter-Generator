@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [resumeText, setResumeText] = useState("");
   const [jobDescription, setJobDescription] = useState("");
+  const [hasHistory, setHasHistory] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
