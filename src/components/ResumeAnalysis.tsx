@@ -9,7 +9,16 @@ import {
   Lightbulb,
   Target,
   Loader2,
+  Key,
+  Wrench,
+  ArrowRightLeft,
 } from "lucide-react";
+
+interface PhrasingImprovement {
+  original: string;
+  improved: string;
+  reason: string;
+}
 
 interface AnalysisData {
   overall_score: number;
@@ -18,6 +27,9 @@ interface AnalysisData {
   suggestions: string[];
   alignment_score?: number;
   alignment_notes?: string[];
+  keywords_to_add?: string[];
+  missing_skills?: string[];
+  phrasing_improvements?: PhrasingImprovement[];
 }
 
 function ScoreBadge({ score, label }: { score: number; label: string }) {
@@ -169,6 +181,71 @@ export function ResumeAnalysis({
               items={analysis.alignment_notes}
               variant="alignment"
             />
+          )}
+
+          {/* AI Resume Improvements */}
+          {(analysis.keywords_to_add?.length || analysis.missing_skills?.length || analysis.phrasing_improvements?.length) && (
+            <div className="pt-2">
+              <h3 className="font-display text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                <Wrench className="h-5 w-5 text-primary" />
+                AI Resume Improvements
+              </h3>
+
+              {analysis.keywords_to_add && analysis.keywords_to_add.length > 0 && (
+                <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 mb-4">
+                  <h4 className="font-display font-semibold text-foreground flex items-center gap-2 mb-3">
+                    <Key className="h-5 w-5 text-primary" />
+                    Keywords to Add
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {analysis.keywords_to_add.map((kw, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary"
+                      >
+                        {kw}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {analysis.missing_skills && analysis.missing_skills.length > 0 && (
+                <Section
+                  icon={AlertTriangle}
+                  title="Missing Skills"
+                  items={analysis.missing_skills}
+                  variant="weakness"
+                />
+              )}
+
+              {analysis.phrasing_improvements && analysis.phrasing_improvements.length > 0 && (
+                <div className="rounded-xl border border-accent/20 bg-accent/5 p-5 mt-4">
+                  <h4 className="font-display font-semibold text-foreground flex items-center gap-2 mb-4">
+                    <ArrowRightLeft className="h-5 w-5 text-accent" />
+                    Phrasing Improvements
+                  </h4>
+                  <div className="space-y-4">
+                    {analysis.phrasing_improvements.map((item, i) => (
+                      <div key={i} className="space-y-1.5">
+                        <div className="flex items-start gap-2">
+                          <span className="mt-0.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground shrink-0">Before:</span>
+                          <p className="text-sm text-foreground/70 line-through">{item.original}</p>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <span className="mt-0.5 text-xs font-semibold uppercase tracking-wider text-accent shrink-0">After:</span>
+                          <p className="text-sm font-medium text-foreground">{item.improved}</p>
+                        </div>
+                        <p className="text-xs text-muted-foreground italic pl-[52px]">{item.reason}</p>
+                        {i < analysis.phrasing_improvements!.length - 1 && (
+                          <div className="border-b border-border/50 pt-2" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
       )}
