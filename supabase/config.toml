@@ -2,3 +2,6 @@ project_id = "korzsuygyvaihhihfzye"
 
 [functions.generate-resume]
 verify_jwt = false
+
+[functions.extract-resume]
+verify_jwt = false
