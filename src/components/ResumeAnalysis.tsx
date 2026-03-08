@@ -9,7 +9,16 @@ import {
   Lightbulb,
   Target,
   Loader2,
+  Key,
+  Wrench,
+  ArrowRightLeft,
 } from "lucide-react";
+
+interface PhrasingImprovement {
+  original: string;
+  improved: string;
+  reason: string;
+}
 
 interface AnalysisData {
   overall_score: number;
@@ -18,6 +27,9 @@ interface AnalysisData {
   suggestions: string[];
   alignment_score?: number;
   alignment_notes?: string[];
+  keywords_to_add?: string[];
+  missing_skills?: string[];
+  phrasing_improvements?: PhrasingImprovement[];
 }
 
 function ScoreBadge({ score, label }: { score: number; label: string }) {
