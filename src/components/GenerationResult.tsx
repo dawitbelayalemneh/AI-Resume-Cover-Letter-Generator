@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, FileText, Mail } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Copy, Check, FileText, Mail, Pencil, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 interface Props {
@@ -28,35 +29,73 @@ function CopyButton({ text }: { text: string }) {
 
 export function GenerationResult({ generatedResume, generatedCoverLetter }: Props) {
   const [activeTab, setActiveTab] = useState<"resume" | "cover">("resume");
+  const [editing, setEditing] = useState(false);
+  const [editedResume, setEditedResume] = useState(generatedResume);
+  const [editedCoverLetter, setEditedCoverLetter] = useState(generatedCoverLetter);
+
+  // Sync props when new generation comes in
+  const [prevResume, setPrevResume] = useState(generatedResume);
+  const [prevCover, setPrevCover] = useState(generatedCoverLetter);
+  if (generatedResume !== prevResume) {
+    setEditedResume(generatedResume);
+    setPrevResume(generatedResume);
+    setEditing(false);
+  }
+  if (generatedCoverLetter !== prevCover) {
+    setEditedCoverLetter(generatedCoverLetter);
+    setPrevCover(generatedCoverLetter);
+    setEditing(false);
+  }
+
+  const currentText = activeTab === "resume" ? editedResume : editedCoverLetter;
+  const setCurrentText = activeTab === "resume" ? setEditedResume : setEditedCoverLetter;
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2">
-        <Button
-          variant={activeTab === "resume" ? "default" : "outline"}
-          size="sm"
-          onClick={() => setActiveTab("resume")}
-        >
-          <FileText className="h-4 w-4" />
-          Resume
-        </Button>
-        <Button
-          variant={activeTab === "cover" ? "default" : "outline"}
-          size="sm"
-          onClick={() => setActiveTab("cover")}
-        >
-          <Mail className="h-4 w-4" />
-          Cover Letter
-        </Button>
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="flex gap-2">
+          <Button
+            variant={activeTab === "resume" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setActiveTab("resume")}
+          >
+            <FileText className="h-4 w-4" />
+            Resume
+          </Button>
+          <Button
+            variant={activeTab === "cover" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setActiveTab("cover")}
+          >
+            <Mail className="h-4 w-4" />
+            Cover Letter
+          </Button>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setEditing(!editing)}
+          >
+            {editing ? <Eye className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+            {editing ? "Preview" : "Edit"}
+          </Button>
+          <CopyButton text={currentText} />
+        </div>
       </div>
 
-      <div className="bg-card rounded-xl p-6 shadow-[var(--card-shadow)] relative">
-        <div className="absolute top-4 right-4">
-          <CopyButton text={activeTab === "resume" ? generatedResume : generatedCoverLetter} />
-        </div>
-        <div className="prose prose-sm max-w-none whitespace-pre-wrap text-foreground pr-24">
-          {activeTab === "resume" ? generatedResume : generatedCoverLetter}
-        </div>
+      <div className="bg-card rounded-xl p-6 shadow-[var(--card-shadow)]">
+        {editing ? (
+          <Textarea
+            value={currentText}
+            onChange={(e) => setCurrentText(e.target.value)}
+            className="min-h-[400px] resize-y font-mono text-sm"
+          />
+        ) : (
+          <div className="prose prose-sm max-w-none whitespace-pre-wrap text-foreground">
+            {currentText}
+          </div>
+        )}
       </div>
     </div>
   );
